@@ -22,7 +22,7 @@ import net.minecraft.world.phys.AABB;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SuspiciousGrow extends Module {
+public class ModuleExample extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
     private final SettingGroup sgRender = settings.createGroup("Render");
 
@@ -49,11 +49,11 @@ public class SuspiciousGrow extends Module {
 
     private final Set<BlockPos> suspicious = new HashSet<>();
 
-    public SuspiciousGrow() {
+    public ModuleExample() {
         super(
             AddonTemplate.CATEGORY,
             "suspicious-grow",
-            "Detects cactus and chorus growth after a block update."
+            "Detects suspicious cactus and chorus growth."
         );
     }
 
@@ -70,29 +70,29 @@ public class SuspiciousGrow extends Module {
         BlockState oldState = event.oldState;
         BlockState newState = event.newState;
 
-        // -------------------------
         // CACTUS
-        // -------------------------
-        if (cactus.get() && newState.is(Blocks.CACTUS) && !oldState.is(Blocks.CACTUS)) {
+        if (cactus.get()
+            && newState.is(Blocks.CACTUS)
+            && !oldState.is(Blocks.CACTUS)) {
+
             BlockPos below = pos.below();
 
-            // A new cactus block appearing directly above
-            // another cactus is consistent with natural growth.
             if (mc.level.getBlockState(below).is(Blocks.CACTUS)) {
                 suspicious.add(pos.immutable());
             }
         }
 
-        // -------------------------
         // CHORUS
-        // -------------------------
-        if (chorus.get() && isChorus(newState) && !isChorus(oldState)) {
+        if (chorus.get()
+            && isChorus(newState)
+            && !isChorus(oldState)) {
+
             if (hasChorusNeighbour(pos)) {
                 suspicious.add(pos.immutable());
             }
         }
 
-        // Remove marker if the suspicious block no longer exists.
+        // Remove marker if the block disappears
         if (!isChorus(newState) && !newState.is(Blocks.CACTUS)) {
             suspicious.remove(pos);
         }
