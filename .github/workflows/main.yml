@@ -1,0 +1,29 @@
+name: Build Meteor Addon
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build
+        run: ./gradlew build
+
+      - name: Upload JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: meteor-addon
+          path: build/libs/*.jar
